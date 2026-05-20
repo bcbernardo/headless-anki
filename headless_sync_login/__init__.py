@@ -102,6 +102,7 @@ def _login_then_maybe_sync() -> None:
                     return
                 mw.pm.set_sync_key(auth.hkey)
                 mw.pm.set_sync_username(username)
+                mw.pm.save()
                 _log("AnkiWeb login succeeded; sync key stored in profile")
                 _sync_collection()
 
