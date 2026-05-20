@@ -34,6 +34,8 @@ RUN apt-get autoremove -y && \
 # Anki volumes
 ADD data /data
 RUN mkdir /data/addons21 && chown -R anki /data
+COPY headless_sync_login /data/addons21/headless_sync_login
+RUN chown -R anki:anki /data/addons21/headless_sync_login
 VOLUME /data
 
 RUN mkdir /export && chown -R anki /export
@@ -54,6 +56,9 @@ RUN jq '.webBindAddress = "0.0.0.0"' /data/addons21/AnkiConnectDev/config.json >
 USER anki
 
 ENV ANKICONNECT_WILDCARD_ORIGIN="0"
+ENV HEADLESS_ANKIWEB_LOGIN="0"
+ENV HEADLESS_ANKIWEB_SYNC_ON_START="0"
+ENV HEADLESS_ANKIWEB_CONFLICT_ACTION="cancel"
 ENV QMLSCENE_DEVICE=softwarecontext
 ENV FONTCONFIG_PATH=/etc/fonts
 ENV QT_XKB_CONFIG_ROOT=/usr/share/X11/xkb

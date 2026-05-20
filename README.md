@@ -56,3 +56,18 @@ docker build \
 For available versions, refer to:
 - [Anki GitHub releases](https://github.com/ankitects/anki/releases)
 - [AnkiConnect releases](https://git.sr.ht/~foosoft/anki-connect/refs)
+
+## Headless AnkiWeb login/sync
+
+This fork adds a small startup add-on that can authenticate against AnkiWeb without opening the GUI login dialog.
+It follows the Anki forum guidance of calling `mw.col.sync_login(...)` and storing the returned sync key and username in the profile.
+
+Environment variables:
+
+- `HEADLESS_ANKIWEB_LOGIN=1` — log in on startup using the variables below.
+- `HEADLESS_ANKIWEB_USERNAME` — AnkiWeb email/username.
+- `HEADLESS_ANKIWEB_PASSWORD` — AnkiWeb password.
+- `HEADLESS_ANKIWEB_SYNC_ON_START=1` — start a sync after login, or using existing stored sync auth when login is disabled.
+- `HEADLESS_ANKIWEB_CONFLICT_ACTION=cancel|upload|download` — choose how to resolve full-sync conflicts in headless mode. Default is `cancel` to avoid accidental data loss.
+
+For persistent use, mount `/data` to a host directory. After the first successful login, Anki stores the sync key in the profile, so future starts can omit the password and use `HEADLESS_ANKIWEB_SYNC_ON_START=1` with the existing profile.
