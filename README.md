@@ -70,4 +70,20 @@ Environment variables:
 - `HEADLESS_ANKIWEB_SYNC_ON_START=1` — start a sync after login, or using existing stored sync auth when login is disabled.
 - `HEADLESS_ANKIWEB_CONFLICT_ACTION=cancel|upload|download` — choose how to resolve full-sync conflicts in headless mode. Default is `cancel` to avoid accidental data loss.
 
-For persistent use, mount `/data` to a host directory. After the first successful login, Anki stores the sync key in the profile, so future starts can omit the password and use `HEADLESS_ANKIWEB_SYNC_ON_START=1` with the existing profile.
+For persistent use, mount `/data` to a Docker volume or host directory. After the first successful login, Anki stores the sync key in the profile, so future starts can omit the password and use `HEADLESS_ANKIWEB_SYNC_ON_START=1` with the existing profile.
+
+A convenience script is included for local deployment:
+
+```bash
+scripts/configure-and-run-ankiweb.sh
+```
+
+It prompts for the AnkiWeb password without echoing it, writes a `0600` env file at `~/.config/headless-anki/ankiweb.env`, and starts a restartable container bound to `127.0.0.1:8765`.
+
+After confirming the first login succeeded and the sync key was stored, remove the password from the env file:
+
+```bash
+scripts/disable-ankiweb-password-env.sh
+```
+
+Then recreate/restart the container with `HEADLESS_ANKIWEB_LOGIN=0` and `HEADLESS_ANKIWEB_SYNC_ON_START=1` so future syncs use the stored profile auth instead of keeping the AnkiWeb password in the container environment.
